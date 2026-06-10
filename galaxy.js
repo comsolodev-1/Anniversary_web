@@ -317,7 +317,7 @@ const MEMORIES = [
   /* ======================================================
      ORB CONTROLLER (like flower page)
      ====================================================== */
-  let orbCanvas, orbCtx, orbDrag = false;
+  let orbCanvas, orbCtx, orbDrag = false, orbMoved = false;
   let orbOdx = 0, orbOdy = 0, orbOcx = 0, orbOcy = 0;
   const ORB_R = 22;
 
@@ -338,20 +338,22 @@ const MEMORIES = [
       e.stopPropagation();
     });
     window.addEventListener('mouseup', () => {
-      if (orbDrag) { orbDrag = false; setTimeout(() => { autoRotate = true; }, 1800); }
+      if (orbDrag) { orbMoved = false; orbDrag = false; setTimeout(() => { autoRotate = true; }, 1800); }
     });
     orbCanvas.addEventListener('touchstart', e => {
       const tc = e.touches[0];
-      orbDrag = true; autoRotate = false;
+      orbDrag = true; orbMoved = false; autoRotate = false;
       orbOdx = tc.clientX; orbOdy = tc.clientY;
       orbOcx = targetRotX; orbOcy = targetRotY;
       e.stopPropagation();
-    }, { passive: true });
+    }, { passive: false });
     window.addEventListener('touchmove', e => {
       if (!orbDrag || !e.touches[0]) return;
       const tc = e.touches[0];
-      targetRotY = orbOcy + (tc.clientX - orbOdx) * 0.010;
-      targetRotX = orbOcx + (tc.clientY - orbOdy) * 0.010;
+      const dx = tc.clientX - orbOdx, dy = tc.clientY - orbOdy;
+      if (Math.hypot(dx, dy) > 4) orbMoved = true;
+      targetRotY = orbOcy + dx * 0.010;
+      targetRotX = orbOcx + dy * 0.010;
       targetRotX = Math.max(-1.3, Math.min(1.3, targetRotX));
     }, { passive: true });
 
@@ -414,9 +416,8 @@ const MEMORIES = [
     let best = -1, bestD = Infinity;
     for (let i = 0; i < memStars.length; i++) {
       const p   = project(memStars[i].ox, memStars[i].oy, memStars[i].oz);
-      // On mobile use a larger minimum hit area (36px) so back-facing / small stars are still tappable
-      const baseHit = isMobile ? 36 : 10;
-      const hit = Math.max(baseHit, 20 * memStars[i].mem.size * p.sc + baseHit);
+      const baseHit = isMobile ? 48 : 10;
+      const hit = Math.max(baseHit, 22 * memStars[i].mem.size * Math.max(p.sc, 0.5) + baseHit);
       const d   = Math.hypot(mx - p.sx, my - p.sy);
       if (d < hit && d < bestD) { bestD = d; best = i; }
     }
@@ -463,14 +464,18 @@ const MEMORIES = [
     // No canvas drag — only orb controls rotation
   }
   function onTouchEnd(e) {
-    if (orbDrag) { orbDrag = false; setTimeout(() => { autoRotate = true; }, 1800); return; }
+    const wasRealOrbDrag = orbDrag && orbMoved;
+    orbMoved = false; orbDrag = false;
+    if (wasRealOrbDrag) { setTimeout(() => { autoRotate = true; }, 1800); return; }
+    if (wasRealOrbDrag) return; // already returned above
     if (!e.changedTouches[0]) return;
     const tc    = e.changedTouches[0];
     const moved = Math.hypot(tc.clientX - lastMX, tc.clientY - lastMY);
-    if (moved < 12) {
+    if (moved < 16) {
       const idx = starAt(tc.clientX, tc.clientY);
-      if (idx >= 0) openCard(idx);
+      if (idx >= 0) { openCard(idx); return; }
     }
+    setTimeout(() => { autoRotate = true; }, 1800);
   }
 
   function onWheel(e) {
@@ -571,7 +576,7 @@ const MEMORIES = [
 
     canvas.addEventListener('mousedown',  onMouseDown);
     window.addEventListener('mousemove',  onMouseMove);
-    window.addEventListener('mouseup',    e => { orbDrag = false; onMouseUp(e); });
+    window.addEventListener('mouseup',    e => { orbMoved = false; orbDrag = false; onMouseUp(e); });
     window.addEventListener('touchstart', onTouchStart, { passive: true });
     window.addEventListener('touchmove',  onTouchMove,  { passive: true });
     window.addEventListener('touchend',   e => { onTouchEnd(e); });
