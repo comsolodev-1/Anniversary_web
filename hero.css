@@ -1,0 +1,255 @@
+/* =============================================
+   HERO.CSS — Split layout: text left, heart right
+   ============================================= */
+
+:root {
+  --rose:       #c0143c;
+  --rose-light: #f48fb1;
+  --white:      #ffffff;
+  --font-display: 'Cinzel', serif;
+  --font-serif:   'Cormorant Garamond', serif;
+  --font-sans:    'Lato', sans-serif;
+  --ease-expo:    cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%;
+  background: #000;
+  overflow: hidden;
+}
+
+#hero {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: radial-gradient(ellipse 120% 100% at 70% 50%, #120008 0%, #000 65%);
+}
+
+/* Canvas fills everything — particles draw on right side via JS */
+#hero-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: grab;
+}
+#hero-canvas:active { cursor: grabbing; }
+
+/* ---- LEFT: Text ---- */
+.hero-content {
+  position: absolute;
+  top: 50%;
+  left: 6vw;
+  transform: translateY(-50%);
+  z-index: 10;
+  max-width: 420px;
+  opacity: 0;
+  transition: opacity 1.8s var(--ease-expo), transform 1.8s var(--ease-expo);
+  transform: translateY(-50%) translateX(-20px);
+  pointer-events: none;
+}
+
+.hero-content.visible {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+  pointer-events: auto;
+}
+
+.hero-eyebrow {
+  font-family: var(--font-sans);
+  font-size: clamp(0.55rem, 1.2vw, 0.68rem);
+  font-weight: 300;
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  color: var(--rose-light);
+  margin-bottom: 1.4rem;
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.8rem, 5.5vw, 5.2rem);
+  font-weight: 300;
+  letter-spacing: 0.05em;
+  line-height: 1.06;
+  color: var(--white);
+  margin-bottom: 1.6rem;
+  text-shadow: 0 0 80px rgba(192,20,60,0.4);
+}
+
+.hero-title em {
+  font-style: italic;
+  color: var(--rose-light);
+  font-family: var(--font-serif);
+  font-size: 1.1em;
+}
+
+.hero-subtitle {
+  font-family: var(--font-serif);
+  font-size: clamp(1rem, 1.8vw, 1.15rem);
+  font-style: italic;
+  font-weight: 300;
+  color: rgba(255,255,255,0.48);
+  line-height: 1.95;
+  margin-bottom: 2.5rem;
+}
+
+/* CTA */
+.hero-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.85rem 2rem;
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  font-weight: 300;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--white);
+  border: 1px solid rgba(255,255,255,0.18);
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.4s;
+}
+.hero-cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--rose);
+  transform: translateX(-101%);
+  transition: transform 0.5s var(--ease-expo);
+}
+.hero-cta:hover::before      { transform: translateX(0); }
+.hero-cta:hover              { border-color: var(--rose); }
+.hero-cta span, .hero-cta svg { position: relative; z-index: 1; }
+.hero-cta:hover svg          { transform: translateY(3px); transition: transform 0.4s; }
+
+/* ---- RIGHT: Hint ---- */
+.heart-hint {
+  position: absolute;
+  bottom: 2.5rem;
+  right: 4vw;
+  z-index: 10;
+  font-family: var(--font-sans);
+  font-size: 0.58rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.2);
+  opacity: 0;
+  animation: fadeIn 1s ease 4s forwards;
+}
+
+/* ---- Scroll hint ---- */
+.scroll-hint {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0;
+  animation: fadeIn 1s ease 4.5s forwards;
+}
+.scroll-hint span {
+  font-family: var(--font-sans);
+  font-size: 0.58rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.2);
+}
+.scroll-line {
+  width: 1px;
+  height: 36px;
+  background: linear-gradient(to bottom, rgba(192,20,60,0.5), transparent);
+  animation: scroll-pulse 2s ease-in-out infinite;
+}
+
+/* ---- Divider line (visual) ---- */
+#hero::after {
+  content: '';
+  position: absolute;
+  top: 15%;
+  bottom: 15%;
+  left: 42%;
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, rgba(192,20,60,0.15) 30%, rgba(192,20,60,0.25) 50%, rgba(192,20,60,0.15) 70%, transparent);
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* ---- Keyframes ---- */
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+@keyframes scroll-pulse {
+  0%, 100% { transform: scaleY(1); opacity: 0.5; }
+  50%       { transform: scaleY(1.5); opacity: 1; }
+}
+
+/* ---- Tablet (700–1024px): tighten spacing ---- */
+@media (max-width: 1024px) and (min-width: 701px) {
+  .hero-content { left: 4vw; max-width: 38vw; }
+}
+
+/* ---- Mobile: stacked layout — visual top half, text bottom half ---- */
+@media (max-width: 700px) {
+  html, body { overflow: hidden; }
+
+  #hero {
+    background: radial-gradient(ellipse 160% 90% at 50% 38%, #120008 0%, #000 65%);
+  }
+
+  /* Canvas stays full-screen; JS will re-center the heart to top half */
+  #hero-canvas { cursor: default; }
+  #hero-canvas:active { cursor: default; }
+
+  /* Cap CTA button width to match the text lines */
+  .hero-cta {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Text block: anchored to bottom half */
+  .hero-content {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transform: none;
+    max-width: 100%;
+    padding: 1.6rem 6vw 1.8rem;
+    background: linear-gradient(to top, rgba(0,0,0,0.82) 60%, transparent);
+    /* override enter animation so it slides up from bottom */
+    transition: opacity 1.8s var(--ease-expo), transform 1.8s var(--ease-expo);
+    transform: translateY(20px);
+  }
+  .hero-content.visible {
+    transform: translateY(0);
+  }
+
+  .hero-title {
+    font-size: clamp(2rem, 8vw, 2.8rem);
+    margin-bottom: 0.9rem;
+  }
+  .hero-subtitle {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    margin-bottom: 1.4rem;
+  }
+  .hero-eyebrow { margin-bottom: 0.8rem; }
+
+  /* Divider line off */
+  #hero::after { display: none; }
+
+  /* Hints */
+  .heart-hint { display: none; }
+  .scroll-hint { display: none; }
+}

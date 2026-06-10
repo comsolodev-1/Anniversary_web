@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Our Story ❤️</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@300;400&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="timeline.css" />
+</head>
+<body>
+
+  <canvas id="bg-canvas"></canvas>
+
+  <header class="chapter-header">
+    <span class="ch-eyebrow">Chapter Three</span>
+    <h1 class="ch-title">Our Story</h1>
+  </header>
+
+  <!-- scroll-container only holds the spine + events, NOT the buttons -->
+  <div id="scroll-container">
+    <div id="airplane-wrap">
+      <svg id="airplane" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 32 L60 6 L44 58 L30 38 Z" fill="rgba(255,200,220,0.9)" stroke="rgba(192,20,60,0.6)" stroke-width="1"/>
+        <path d="M30 38 L36 32 L60 6" stroke="rgba(192,20,60,0.4)" stroke-width="0.8" fill="none"/>
+        <path d="M30 38 L44 58" stroke="rgba(255,200,220,0.5)" stroke-width="0.8" fill="none"/>
+      </svg>
+    </div>
+
+    <svg id="flight-path" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path id="flight-curve" fill="none" stroke="rgba(192,20,60,0.12)" stroke-width="1.5" stroke-dasharray="6 8"/>
+    </svg>
+
+    <div id="spine-wrap">
+      <div id="spine-track"><div id="spine-fill"></div></div>
+    </div>
+
+    <div id="events-wrap"></div>
+  </div>
+  <!-- ↑ spine ends here — buttons are OUTSIDE so line never touches them -->
+
+  <!-- Nav buttons — outside scroll-container, spine can't reach -->
+  <div id="chapter-nav">
+    <a href="flower.html" class="ch-btn">
+      <svg width="12" height="12" viewBox="0 0 16 16" fill="none" style="transform:rotate(90deg)">
+        <path d="M8 3v10M3 8l5 5 5-5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>Chapter Two</span>
+    </a>
+    <a href="galaxy.html" class="ch-btn ch-btn--next">
+      <span>Chapter Four</span>
+      <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+        <path d="M8 3v10M3 8l5 5 5-5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  </div>
+
+  <script src="timeline.js"></script>
+</body>
+</html>

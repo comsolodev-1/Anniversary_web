@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Forever ❤️</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@300;400&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="final.css" />
+</head>
+<body>
+  <canvas id="final-canvas"></canvas>
+
+  <!-- Moon easter egg -->
+  <div id="moon-btn">🌙</div>
+  <div id="moon-progress"><div id="moon-fill"></div></div>
+
+  <!-- Text content — fades in after sequence -->
+  <div id="final-content">
+    <p class="f-eyebrow">Final Chapter</p>
+    <h1 class="f-title">Forever</h1>
+    <div class="f-messages">
+      <p class="f-line" style="--i:0">Happy Anniversary ❤️</p>
+      <p class="f-line" style="--i:1">Thank you for every beautiful memory.</p>
+      <p class="f-line f-gap" style="--i:2">Here's to forever.</p>
+      <p class="f-sign" style="--i:3">I love you.</p>
+    </div>
+  </div>
+
+  <!-- Navigation now via chapter orbs in corners -->
+
+  <!-- Secret overlay -->
+  <div id="secret-overlay">
+    <div class="secret-card">
+      <canvas id="secret-star-canvas" width="80" height="80"></canvas>
+      <p class="secret-label">You found the secret</p>
+      <h2 class="secret-title">A Hidden World</h2>
+      <p class="secret-desc">Something special waits for you.</p>
+      <a href="secret.html" class="ch-btn ch-btn--next"><span>Enter</span>
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8l5 5 5-5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <button id="secret-close">not now</button>
+    </div>
+  </div>
+
+  <script src="final.js"></script>
+</body>
+</html>

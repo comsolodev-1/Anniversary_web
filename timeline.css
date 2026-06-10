@@ -1,0 +1,336 @@
+/* =============================================
+   TIMELINE.CSS — Chapter 3: Our Story
+   ============================================= */
+:root {
+  --rose:        #c0143c;
+  --rose-mid:    #e0365a;
+  --rose-light:  #f48fb1;
+  --white:       #ffffff;
+  --bg:          #04000a;
+  --font-display: 'Cinzel', serif;
+  --font-serif:   'Cormorant Garamond', serif;
+  --font-sans:    'Lato', sans-serif;
+  --ease-expo:    cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  /* Ensure body is tall enough to scroll */
+  min-height: 100%;
+}
+
+/* ── Background canvas (fixed) ── */
+#bg-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Sticky chapter header ── */
+.chapter-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  padding: 1.4rem 0 1rem;
+  text-align: center;
+  background: linear-gradient(to bottom, rgba(4,0,10,0.96) 65%, transparent);
+  pointer-events: none;
+}
+.ch-eyebrow {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 0.58rem;
+  font-weight: 300;
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  color: var(--rose-mid);
+  margin-bottom: 0.4rem;
+}
+.ch-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 4vw, 2.8rem);
+  font-weight: 300;
+  letter-spacing: 0.12em;
+  color: var(--white);
+  text-shadow: 0 0 60px rgba(192,20,60,0.4);
+}
+
+/* ── Scroll container ── */
+#scroll-container {
+  position: relative;   /* essential: spine + flight-path are absolute children */
+  z-index: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 1.5rem 12vh;
+}
+
+/* ── Paper airplane (fixed, JS positions it) ── */
+#airplane-wrap {
+  position: fixed;
+  top: 0; left: 0;
+  width: 52px; height: 52px;
+  z-index: 30;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 0 8px rgba(192,20,60,0.65));
+  transition: opacity 0.4s;
+}
+#airplane { width: 100%; height: 100%; }
+
+/* ── Flight path SVG (absolute inside #scroll-container) ── */
+#flight-path {
+  position: absolute;
+  top: 0; left: 0;
+  pointer-events: none;
+  z-index: 2;
+  overflow: visible;
+}
+
+/* ── Spine (absolute inside #scroll-container) ── */
+#spine-wrap {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;           /* full height — button is now outside this container */
+  transform: translateX(-50%);
+  width: 2px;
+  pointer-events: none;
+  z-index: 2;
+}
+#spine-track {
+  position: relative;
+  width: 100%; height: 100%;
+  background: rgba(192,20,60,0.08);
+  border-radius: 1px;
+}
+#spine-fill {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 0%;
+  background: linear-gradient(to bottom, var(--rose-mid), var(--rose-light));
+  border-radius: 1px;
+  transition: height 0.06s linear;
+  box-shadow: 0 0 12px rgba(192,20,60,0.5);
+}
+
+/* ── Events wrapper ── */
+#events-wrap {
+  position: relative;
+  z-index: 5;
+  padding: 6vh 0 4vh;
+}
+
+/* ── Individual event ── */
+.tl-event {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 13vh;
+  opacity: 0;
+  transform: translateY(36px);
+  transition: opacity 0.75s var(--ease-expo), transform 0.75s var(--ease-expo);
+}
+.tl-event.visible { opacity: 1; transform: translateY(0); }
+
+.tl-event.left  { flex-direction: row; }
+.tl-event.right { flex-direction: row-reverse; }
+
+/* Centre dot */
+.tl-dot {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--rose-mid);
+  border: 2px solid rgba(255,255,255,0.12);
+  box-shadow: 0 0 16px rgba(192,20,60,0.7), 0 0 4px rgba(255,255,255,0.3);
+  z-index: 10;
+  flex-shrink: 0;
+  transition: transform 0.4s var(--ease-expo), box-shadow 0.4s;
+}
+.tl-event.visible .tl-dot {
+  transform: translateX(-50%) scale(1.25);
+  box-shadow: 0 0 26px rgba(192,20,60,0.95), 0 0 6px rgba(255,255,255,0.4);
+}
+
+/* Card */
+.tl-card {
+  width: calc(50% - 2.8rem);
+  padding: 1.5rem 1.8rem;
+  background: rgba(255,255,255,0.025);
+  border: 1px solid rgba(192,20,60,0.16);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+}
+.tl-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(192,20,60,0.5), transparent);
+}
+.tl-event.left  .tl-card { margin-right: auto; text-align: right; }
+.tl-event.right .tl-card { margin-left:  auto; text-align: left;  }
+
+.tl-date {
+  font-family: var(--font-sans);
+  font-size: 0.58rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--rose-mid);
+  margin-bottom: 0.5rem;
+}
+.tl-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.05rem, 2.2vw, 1.45rem);
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  color: var(--white);
+  margin-bottom: 0.6rem;
+}
+.tl-desc {
+  font-family: var(--font-serif);
+  font-size: clamp(0.9rem, 1.5vw, 1.05rem);
+  font-style: italic;
+  color: rgba(255,255,255,0.5);
+  line-height: 1.7;
+}
+.tl-icon {
+  position: absolute;
+  font-size: 1.8rem;
+  opacity: 0.12;
+  pointer-events: none;
+}
+.tl-event.left  .tl-icon { bottom: 0.6rem; left: 0.8rem; }
+.tl-event.right .tl-icon { bottom: 0.6rem; right: 0.8rem; }
+
+/* Spotify */
+.tl-spotify { margin-top: 1rem; border-radius: 4px; overflow: hidden; }
+
+/* ── Chapter nav buttons (outside scroll-container) ── */
+#chapter-nav {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  padding: 4vh 1.5rem 8vh;
+  position: relative;
+  z-index: 10;
+}
+
+/* Hero-identical button — matches flower/hero */
+.ch-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1.8rem;
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  font-weight: 300;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--white);
+  border: 1px solid rgba(255,255,255,0.18);
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.4s;
+}
+.ch-btn::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: var(--rose);
+  transform: translateX(-101%);
+  transition: transform 0.5s var(--ease-expo);
+}
+.ch-btn:hover::before { transform: translateX(0); }
+.ch-btn:hover { border-color: var(--rose); }
+.ch-btn span, .ch-btn svg { position: relative; z-index: 1; }
+.ch-btn:hover svg { transition: transform 0.4s; }
+
+.ch-btn--next {
+  border-color: rgba(192,20,60,0.35);
+}
+
+/* ── Keyframes ── */
+@keyframes fadeIn { to { opacity: 1; } }
+
+/* ================================================================
+   MOBILE  ≤700px
+   Spine shifts to left edge; all cards full width on the right
+   ================================================================ */
+@media (max-width: 700px) {
+  #scroll-container { padding: 0 1rem 4vh; }
+
+  /* Spine: left rail, full height of scroll-container (buttons are outside) */
+  #spine-wrap {
+    left: 1.5rem;
+    transform: none;
+    bottom: 0;
+  }
+
+  /* All events: single column on the right */
+  .tl-event,
+  .tl-event.left,
+  .tl-event.right {
+    flex-direction: row !important;
+    margin-bottom: 7vh;
+    padding-left: 3.4rem;
+  }
+
+  /* Dot anchored to the spine */
+  .tl-event .tl-dot,
+  .tl-event.left .tl-dot,
+  .tl-event.right .tl-dot {
+    left: 1.5rem !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+  }
+  .tl-event.visible .tl-dot,
+  .tl-event.left.visible .tl-dot,
+  .tl-event.right.visible .tl-dot {
+    transform: translateX(-50%) scale(1.25) !important;
+  }
+
+  /* Cards: full width, left-aligned */
+  .tl-card,
+  .tl-event.left  .tl-card,
+  .tl-event.right .tl-card {
+    width: 100% !important;
+    margin: 0 !important;
+    text-align: left !important;
+  }
+  .tl-icon { display: none; }
+
+  #events-wrap { padding-top: 3vh; }
+
+  /* Airplane: visible, JS positions it */
+  #airplane-wrap {
+    display: block;
+    width: 36px;
+    height: 36px;
+    position: fixed;
+    opacity: 1;
+  }
+  #flight-path { display: none; }
+
+  /* Nav buttons: stacked, full width */
+  #chapter-nav {
+    flex-direction: column;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 3vh 1rem 6vh;
+  }
+  .ch-btn {
+    width: 88vw;
+    justify-content: center;
+  }
+}

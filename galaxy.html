@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Memory Galaxy ❤️</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@300;400&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="galaxy.css" />
+</head>
+<body>
+
+  <canvas id="galaxy-canvas"></canvas>
+
+  <!-- Left: chapter text -->
+  <div class="chapter-label">
+    <span class="gl-eyebrow">Chapter Four</span>
+    <h1 class="gl-title">Memory<br><em>Galaxy</em></h1>
+    <p class="gl-hint">Hover a star to discover a memory.<br>Click to open it.</p>
+  </div>
+
+  <!-- Orb controller — positioned by CSS near galaxy, centred on mobile -->
+  <div class="orb-wrap" id="orb-wrap"></div>
+
+  <!-- Nav buttons — always centred at bottom -->
+  <nav class="galaxy-nav">
+    <a href="timeline.html" class="ch-btn">
+      <svg width="12" height="12" viewBox="0 0 16 16" fill="none" style="transform:rotate(90deg)">
+        <path d="M8 3v10M3 8l5 5 5-5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>Chapter Three</span>
+    </a>
+    <a href="final.html" class="ch-btn ch-btn--next">
+      <span>Chapter Five</span>
+      <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+        <path d="M8 3v10M3 8l5 5 5-5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  </nav>
+
+  <!-- Memory card overlay -->
+  <div id="mem-overlay" class="mem-overlay" aria-hidden="true">
+    <div class="mem-card" id="mem-card">
+      <button class="mem-close" id="mem-close" aria-label="Close">&#x2715;</button>
+      <div class="mem-star-icon" id="mem-star-icon">⭐</div>
+      <p class="mem-date"   id="mem-date"></p>
+      <h2 class="mem-title" id="mem-title"></h2>
+      <p class="mem-desc"   id="mem-desc"></p>
+      <div class="mem-spotify"   id="mem-spotify"></div>
+      <div class="mem-particles" id="mem-particles"></div>
+    </div>
+  </div>
+
+  <script src="galaxy.js"></script>
+</body>
+</html>

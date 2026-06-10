@@ -1,0 +1,272 @@
+/* =============================================
+   ROSE.CSS — text LEFT, rose RIGHT
+   ============================================= */
+:root {
+  --rose:       #c0143c;
+  --rose-light: #f48fb1;
+  --rose-mid:   #e0365a;
+  --white:      #ffffff;
+  --font-display: 'Cinzel', serif;
+  --font-serif:   'Cormorant Garamond', serif;
+  --font-sans:    'Lato', sans-serif;
+  --ease-expo:    cubic-bezier(0.16, 1, 0.3, 1);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; background: #07000d; overflow: hidden; }
+
+#rose {
+  position: relative;
+  width: 100vw; height: 100vh;
+  overflow: hidden;
+  background: radial-gradient(ellipse 90% 90% at 68% 52%, #1a0010 0%, #07000d 60%, #000 100%);
+}
+
+#rose-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+/* ---- LEFT text ---- */
+.rose-left {
+  position: absolute;
+  top: 50%;
+  left: 6vw;
+  transform: translateY(-50%);
+  z-index: 10;
+  max-width: 400px;
+  animation: fadeUp 1.2s var(--ease-expo) 0.2s both;
+}
+
+.rose-eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  font-weight: 300;
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  margin-bottom: 1.2rem;
+  background: linear-gradient(90deg, var(--rose-mid), #fff, var(--rose-mid));
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 4s linear infinite;
+}
+
+.rose-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.6rem, 5vw, 4.2rem);
+  font-weight: 300;
+  letter-spacing: 0.05em;
+  line-height: 1.08;
+  color: var(--white);
+  text-shadow: 0 0 60px rgba(192,20,60,0.35);
+  margin-bottom: 1.4rem;
+}
+
+.rose-subtitle {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  font-style: italic;
+  color: rgba(255,255,255,0.5);
+  line-height: 1.9;
+  margin-bottom: 0.8rem;
+}
+
+.rose-hint {
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.2);
+  margin-bottom: 2.5rem;
+}
+
+/* ---- Reason card ---- */
+.rose-reason {
+  border: 1px solid rgba(192,20,60,0.3);
+  padding: 1.2rem 1.6rem;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.5s var(--ease-expo), transform 0.5s var(--ease-expo);
+  min-height: 80px;
+}
+.rose-reason.visible { opacity: 1; transform: translateY(0); }
+
+.reason-number {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  color: var(--rose-mid);
+  margin-bottom: 0.5rem;
+}
+.reason-text {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  font-style: italic;
+  color: rgba(255,255,255,0.85);
+  line-height: 1.6;
+}
+
+/* ---- Divider ---- */
+.divider {
+  position: absolute;
+  top: 15%; bottom: 15%;
+  left: 43%;
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, rgba(192,20,60,0.2) 30%, rgba(192,20,60,0.3) 50%, rgba(192,20,60,0.2) 70%, transparent);
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* ---- Bloom bar ---- */
+.bloom-hint {
+  position: absolute;
+  bottom: 2rem; right: 2.5rem;
+  z-index: 10;
+  display: flex; align-items: center; gap: 0.8rem;
+}
+.bloom-bar-track {
+  width: 80px; height: 2px;
+  background: rgba(255,255,255,0.07);
+  border-radius: 1px; overflow: hidden;
+}
+.bloom-bar-fill {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, #8b0000, var(--rose));
+  border-radius: 1px;
+  transition: width 0.3s;
+}
+.bloom-hint span {
+  font-family: var(--font-sans);
+  font-size: 0.58rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.2);
+}
+
+/* ---- Animations ---- */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(-50%) translateX(-16px); }
+  to   { opacity: 1; transform: translateY(-50%) translateX(0); }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+/* ---- Tablet adjustments ---- */
+@media (max-width: 1024px) and (min-width: 701px) {
+  .rose-left { left: 4vw; max-width: 36vw; }
+}
+
+/* ---- Mobile: stacked — rose top half, text bottom overlay ---- */
+@media (max-width: 700px) {
+  #rose {
+    background: radial-gradient(ellipse 160% 90% at 50% 35%, #1a0010 0%, #07000d 60%, #000 100%);
+  }
+
+  /* Text block slides to the bottom — give enough room for bloom bar + two buttons */
+  .rose-left {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transform: none;
+    max-width: 100%;
+    padding: 1.4rem 6vw 11rem; /* 11rem = space for bloom + 2 stacked buttons */
+    background: linear-gradient(to top, rgba(0,0,0,0.88) 70%, transparent);
+    animation: fadeUpMobile 1.2s var(--ease-expo) 0.2s both;
+  }
+
+  .rose-title {
+    font-size: clamp(2rem, 8vw, 2.8rem);
+    margin-bottom: 0.8rem;
+  }
+  .rose-subtitle {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    margin-bottom: 0.5rem;
+  }
+  .rose-hint { margin-bottom: 1.2rem; }
+
+  /* Reason card: shrink a bit */
+  .rose-reason { padding: 0.9rem 1.2rem; min-height: 60px; }
+  .reason-text { font-size: 1rem; }
+
+  /* Bloom bar: sits just above the nav buttons */
+  .bloom-hint {
+    position: absolute !important;
+    bottom: 8.5rem !important;
+    top: auto !important;
+    right: auto !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    flex-direction: row;
+    gap: 0.7rem;
+  }
+
+  .divider { display: none; }
+}
+
+@keyframes fadeUpMobile {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+/* ── Bottom nav — hero-style buttons ── */
+.bottom-nav {
+  position: absolute;
+  bottom: 1.4rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  white-space: nowrap;
+}
+
+/* Hero-identical pill button */
+.ch-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1.6rem;
+  font-family: var(--font-sans);
+  font-size: 0.62rem;
+  font-weight: 300;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--white);
+  border: 1px solid rgba(255,255,255,0.18);
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.4s;
+}
+.ch-btn::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: rgba(192,20,60,0.85);
+  transform: translateX(-101%);
+  transition: transform 0.5s var(--ease-expo);
+}
+.ch-btn:hover::before { transform: translateX(0); }
+.ch-btn:hover { border-color: var(--rose); }
+.ch-btn span, .ch-btn svg { position: relative; z-index: 1; }
+
+/* "next" variant pre-tinted */
+.ch-btn--next {
+  border-color: rgba(192,20,60,0.35);
+}
+.ch-btn--next::before { transform: translateX(0); background: var(--rose); opacity: 0.18; }
+.ch-btn--next:hover::before { opacity: 1; }
+
+/* Mobile */
+@media (max-width: 700px) {
+  .bottom-nav {
+    flex-direction: column;
+    gap: 0.6rem;
+    bottom: 1rem;
+  }
+  .ch-btn { width: 80vw; justify-content: center; font-size: 0.58rem; padding: 0.7rem 1.2rem; }
+}

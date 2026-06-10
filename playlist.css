@@ -1,0 +1,97 @@
+:root{--rose:#c0143c;--rose-mid:#e0365a;--rose-light:#f48fb1;--gold:#d4a853;--white:#fff;--font-display:'Cinzel',serif;--font-serif:'Cormorant Garamond',serif;--font-sans:'Lato',sans-serif;--ease-expo:cubic-bezier(0.16,1,0.3,1);}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;height:100%;background:#02000a;overflow:hidden;color:#fff;}
+#pl-canvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;}
+#notes-canvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:5;}
+
+/* Header — compact so it doesn't overlap orbit */
+#pl-content{
+  position:fixed;top:0;left:0;right:0;z-index:10;
+  padding:1rem 0 0;text-align:center;
+  pointer-events:none;
+  animation:fadeUp 1.2s var(--ease-expo) .3s both;
+}
+.pl-eyebrow{font-family:var(--font-sans);font-size:.54rem;letter-spacing:.4em;text-transform:uppercase;color:var(--gold);margin-bottom:.3rem;}
+.pl-title{font-family:var(--font-display);font-size:clamp(1.4rem,3.5vw,2.4rem);font-weight:300;letter-spacing:.08em;color:var(--white);text-shadow:0 0 60px rgba(192,20,60,.4);line-height:1.15;}
+.pl-title em{font-family:var(--font-serif);font-style:italic;color:var(--rose-light);}
+.pl-hint{font-family:var(--font-serif);font-size:.82rem;font-style:italic;color:rgba(255,255,255,.3);margin-top:.3rem;}
+
+/* Vinyl in center — pushed down so title doesn't overlap orbit */
+#vinyl-stage{
+  position:fixed;top:54%;left:50%;
+  transform:translate(-50%,-50%);
+  z-index:8;
+  transition:top .3s;
+}
+#vinyl-canvas{display:block;filter:drop-shadow(0 0 30px rgba(192,20,60,.4));transition:filter .4s;}
+#vinyl-canvas.playing{filter:drop-shadow(0 0 60px rgba(192,20,60,.8)) drop-shadow(0 0 20px rgba(212,168,83,.5));}
+
+#song-ring{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+  z-index:9;
+}
+
+.song-card{
+  position:absolute;transform:translate(-50%,-50%);
+  width:105px;padding:.5rem .6rem;
+  background:rgba(8,0,18,.9);border:1px solid rgba(212,168,83,.2);
+  text-align:center;cursor:pointer;pointer-events:auto;
+  transition:border-color .3s,background .3s,transform .3s,box-shadow .3s;
+}
+.song-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(212,168,83,.4),transparent);}
+.song-card:hover{border-color:var(--gold);background:rgba(20,5,30,.98);transform:translate(-50%,-50%) scale(1.1);box-shadow:0 8px 30px rgba(212,168,83,.2);}
+.song-card.playing{border-color:var(--rose-mid);background:rgba(192,20,60,.15);box-shadow:0 0 20px rgba(192,20,60,.4);}
+.sc-note{font-size:.85rem;margin-bottom:.15rem;}
+.sc-title{font-family:var(--font-sans);font-size:.46rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.75);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sc-artist{font-family:var(--font-serif);font-size:.6rem;font-style:italic;color:rgba(255,255,255,.35);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* Now playing bar — sits above bottom links, never overlaps orbit */
+#now-playing{
+  position:fixed;bottom:3.5rem;left:50%;transform:translateX(-50%);
+  z-index:20;display:flex;flex-direction:column;align-items:center;gap:.5rem;
+  padding:.8rem 1.2rem;background:rgba(8,0,18,.95);
+  border:1px solid rgba(192,20,60,.35);backdrop-filter:blur(8px);
+  transition:opacity .5s;
+  max-width:min(420px,92vw);width:100%;
+}
+#now-playing.hidden{opacity:0;pointer-events:none;}
+.np-info{display:flex;align-items:center;gap:.8rem;width:100%;}
+#np-note{font-size:1.2rem;flex-shrink:0;}
+.np-text{flex:1;min-width:0;}
+#np-title{font-family:var(--font-sans);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#np-artist{font-family:var(--font-serif);font-size:.72rem;font-style:italic;color:rgba(255,255,255,.4);}
+#np-memory{font-family:var(--font-serif);font-size:.7rem;font-style:italic;color:rgba(255,255,255,.3);margin-top:.1rem;font-size:.65rem;}
+#np-stop{background:none;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.4);font-family:var(--font-sans);font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;padding:.35rem .8rem;transition:color .3s,border-color .3s;align-self:flex-end;}
+#np-stop:hover{color:#fff;border-color:var(--rose);}
+#sp-label{font-family:var(--font-sans);font-size:.46rem;letter-spacing:.1em;color:rgba(255,255,255,.2);text-align:center;}
+
+.back-link{position:fixed;bottom:1.2rem;left:50%;transform:translateX(-50%);z-index:20;font-family:var(--font-sans);font-size:.54rem;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,.18);text-decoration:none;transition:color .3s;white-space:nowrap;}
+.back-link:hover{color:rgba(255,255,255,.6);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── Mobile ── */
+@media(max-width:700px){
+  #pl-content{padding-top:.7rem;}
+  .pl-title{font-size:clamp(1.1rem,5.5vw,1.5rem);}
+  .pl-hint{font-size:.7rem;}
+
+  /* Vinyl moves up slightly on mobile to leave room for orbit below */
+  #vinyl-stage{top:52%;}
+
+  /* Smaller orbit cards on mobile — still circular */
+  .song-card{
+    width:76px;
+    padding:.35rem .4rem;
+  }
+  .sc-note{font-size:.72rem;}
+  .sc-title{font-size:.38rem;}
+  .sc-artist{font-size:.5rem;}
+
+  #now-playing{
+    bottom:2.8rem;
+    padding:.6rem .9rem;
+  }
+}

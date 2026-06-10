@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rose Garden ❤️</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@300;400&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="flower.css" />
+</head>
+<body>
+<section id="rose">
+
+  <canvas id="rose-canvas"></canvas>
+
+  <!-- LEFT: text -->
+  <div class="rose-left">
+    <p class="rose-eyebrow">Chapter Two</p>
+    <h2 class="rose-title">A Garden<br>of Reasons</h2>
+    <p class="rose-subtitle">
+      Every petal holds a reason<br />
+      why I love you.
+    </p>
+    <p class="rose-hint">Hover the rose to discover them.</p>
+
+    <div id="rose-reason" class="rose-reason">
+      <span class="reason-number" id="reason-number">#1</span>
+      <p class="reason-text" id="reason-text"></p>
+    </div>
+  </div>
+
+  <!-- Divider -->
+  <div class="divider"></div>
+
+  <!-- Bloom bar — now inside a safe wrapper -->
+  <div class="bloom-hint" id="bloom-hint-wrap">
+    <div class="bloom-bar-track"><div class="bloom-bar-fill" id="bloom-bar"></div></div>
+    <span id="bloom-label">blooming…</span>
+  </div>
+
+  <!-- Bottom nav — hero-style buttons -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="ch-btn">
+      <svg width="12" height="12" viewBox="0 0 16 16" fill="none" style="transform:rotate(90deg)">
+        <path d="M8 3v10M3 8l5 5 5-5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span>Chapter One</span>
+    </a>
+    <a href="timeline.html" class="ch-btn ch-btn--next">
+      <span>Chapter Three</span>
+      <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+        <path d="M8 3v10M3 8l5 5 5-5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  </nav>
+
+</section>
+<script src="flower.js"></script>
+</body>
+</html>

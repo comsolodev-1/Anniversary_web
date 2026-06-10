@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Playlist of Us 🎵</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@300;400&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="playlist.css"/>
+</head>
+<body>
+  <canvas id="pl-canvas"></canvas>
+
+  <div id="pl-content">
+    <p class="pl-eyebrow">Hidden World · One</p>
+    <h1 class="pl-title">Playlist<br><em>of Us</em></h1>
+    <p class="pl-hint">Click a record to play.</p>
+  </div>
+
+  <!-- Vinyl stage (center) -->
+  <div id="vinyl-stage">
+    <canvas id="vinyl-canvas"></canvas>
+    <!-- Song cards orbit here — built by JS -->
+    <div id="song-ring"></div>
+  </div>
+
+  <!-- Floating music notes -->
+  <canvas id="notes-canvas"></canvas>
+
+  <!-- Now playing bar -->
+  <div id="now-playing" class="hidden">
+    <div class="np-info">
+      <span id="np-note">🎵</span>
+      <div class="np-text">
+        <p id="np-title">Song title</p>
+        <p id="np-artist">Artist</p>
+        <p id="np-memory"></p>
+      </div>
+      <button id="np-stop">■ stop</button>
+    </div>
+    <p id="sp-label"></p>
+    <!-- Spotify iframe — one reused frame, src swapped per song -->
+    <iframe id="sp-iframe"
+      style="display:none;border-radius:8px"
+      width="100%" height="80"
+      frameborder="0"
+      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+      loading="lazy"
+      title="Spotify player"></iframe>
+  </div>
+
+  <a href="secret.html" class="back-link">← Hidden World</a>
+  <script src="playlist.js"></script>
+</body>
+</html>
