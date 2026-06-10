@@ -200,50 +200,16 @@ html, body {
 
 /* ---- Mobile: stacked layout — visual top half, text bottom half ---- */
 @media (max-width: 700px) {
-  html, body { overflow: hidden; }
+  html, body { height: 100dvh; overflow: hidden; }
 
   #hero {
+    height: 100dvh;
     background: radial-gradient(ellipse 160% 90% at 50% 38%, #120008 0%, #000 65%);
   }
 
-  /* Canvas stays full-screen; JS will re-center the heart to top half */
+  /* Canvas stays full-screen; JS re-centers heart to top ~45% */
   #hero-canvas { cursor: default; }
   #hero-canvas:active { cursor: default; }
-
-  /* Cap CTA button width to match the text lines */
-  .hero-cta {
-    display: flex;
-    width: 100%;
-    justify-content: center;
-  }
-
-  /* Text block: anchored to bottom half */
-  .hero-content {
-    top: auto;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    transform: none;
-    max-width: 100%;
-    padding: 1.4rem 6vw max(1.8rem, env(safe-area-inset-bottom, 1.8rem));
-    background: linear-gradient(to top, rgba(0,0,0,0.82) 60%, transparent);
-    transition: opacity 1.8s var(--ease-expo), transform 1.8s var(--ease-expo);
-    transform: translateY(20px);
-  }
-  .hero-content.visible {
-    transform: translateY(0);
-  }
-
-  .hero-title {
-    font-size: clamp(2rem, 8vw, 2.8rem);
-    margin-bottom: 0.9rem;
-  }
-  .hero-subtitle {
-    font-size: 0.95rem;
-    line-height: 1.7;
-    margin-bottom: 1.4rem;
-  }
-  .hero-eyebrow { margin-bottom: 0.8rem; }
 
   /* Divider line off */
   #hero::after { display: none; }
@@ -251,4 +217,52 @@ html, body {
   /* Hints */
   .heart-hint { display: none; }
   .scroll-hint { display: none; }
+
+  /* Text block anchored to bottom, fades up */
+  .hero-content {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transform: translateY(20px);
+    max-width: 100%;
+    /* padding-bottom clears the CTA button height (~3rem) + safe area + gap */
+    padding: 1.4rem 6vw calc(max(1rem, env(safe-area-inset-bottom, 1rem)) + 4rem);
+    background: linear-gradient(to top, rgba(0,0,0,0.88) 60%, transparent);
+    transition: opacity 1.8s var(--ease-expo), transform 1.8s var(--ease-expo);
+  }
+  .hero-content.visible {
+    transform: translateY(0);
+  }
+
+  .hero-eyebrow { margin-bottom: 0.7rem; }
+  .hero-title {
+    font-size: clamp(1.8rem, 8vw, 2.6rem);
+    margin-bottom: 0.7rem;
+  }
+  .hero-subtitle {
+    font-size: 0.9rem;
+    line-height: 1.65;
+    margin-bottom: 1.2rem;
+  }
+
+  /* CTA button: fixed to bottom so it's always visible */
+  .hero-cta {
+    position: fixed;
+    bottom: max(1.2rem, env(safe-area-inset-bottom, 1.2rem));
+    left: 50%;
+    transform: translateX(-50%);
+    width: 82vw;
+    justify-content: center;
+    z-index: 30;
+    /* keep the ::before slide-in working with fixed positioning */
+    pointer-events: auto;
+  }
+
+  /* Extra-short phones */
+  @media (max-height: 680px) {
+    .hero-title { font-size: 1.5rem; margin-bottom: 0.4rem; }
+    .hero-subtitle { font-size: 0.82rem; line-height: 1.5; margin-bottom: 0.8rem; }
+    .hero-eyebrow { margin-bottom: 0.4rem; }
+  }
 }
