@@ -159,13 +159,49 @@ html, body { width: 100%; height: 100%; background: #07000d; overflow: hidden; }
   .rose-left { left: 4vw; max-width: 36vw; }
 }
 
-/* ---- Mobile: stacked — rose top half, text bottom overlay ---- */
+/* ---- Mobile: stacked — rose top half, text + nav bottom ---- */
 @media (max-width: 700px) {
+  html, body { height: 100dvh; overflow: hidden; }
+
   #rose {
+    height: 100dvh;
     background: radial-gradient(ellipse 160% 90% at 50% 35%, #1a0010 0%, #07000d 60%, #000 100%);
   }
 
-  /* Text block slides to the bottom — give enough room for bloom bar + two buttons */
+  .divider { display: none; }
+
+  /* Nav buttons: fixed to very bottom, always visible */
+  .bottom-nav {
+    position: fixed !important;
+    bottom: max(1rem, env(safe-area-inset-bottom, 1rem)) !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+    width: 82vw !important;
+    z-index: 30 !important;
+  }
+  .ch-btn {
+    width: 100% !important;
+    justify-content: center !important;
+    font-size: 0.58rem !important;
+    padding: 0.72rem 1.2rem !important;
+  }
+
+  /* Bloom bar: sits just above the nav stack (~6rem = 2 buttons + gaps) */
+  .bloom-hint {
+    position: fixed !important;
+    bottom: calc(max(1rem, env(safe-area-inset-bottom, 1rem)) + 6rem) !important;
+    left: 50% !important;
+    top: auto !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    flex-direction: row;
+    gap: 0.7rem;
+    z-index: 30 !important;
+  }
+
+  /* Text block anchored to bottom, padding clears bloom bar + nav */
   .rose-left {
     top: auto;
     bottom: 0;
@@ -173,48 +209,32 @@ html, body { width: 100%; height: 100%; background: #07000d; overflow: hidden; }
     right: 0;
     transform: none;
     max-width: 100%;
-    padding: 1.2rem 6vw 12rem;
-    background: linear-gradient(to top, rgba(0,0,0,0.88) 70%, transparent);
+    /* ~6rem nav + ~2.5rem bloom bar + 1rem gap */
+    padding: 1.2rem 6vw calc(max(1rem, env(safe-area-inset-bottom, 1rem)) + 10rem);
+    background: linear-gradient(to top, rgba(0,0,0,0.92) 65%, transparent);
     animation: fadeUpMobile 1.2s var(--ease-expo) 0.2s both;
   }
 
-  /* On very short phones (< 680px tall), reduce padding */
-  @media (max-width: 700px) and (max-height: 680px) {
-    .rose-left { padding-bottom: 9rem; }
-    .rose-title { font-size: 1.6rem; margin-bottom: 0.4rem; }
-    .rose-subtitle { font-size: 0.85rem; margin-bottom: 0.3rem; }
-    .rose-hint { margin-bottom: 0.6rem; }
-    .rose-reason { min-height: 50px; padding: 0.6rem 0.9rem; }
-  }
-
   .rose-title {
-    font-size: clamp(2rem, 8vw, 2.8rem);
-    margin-bottom: 0.8rem;
+    font-size: clamp(1.6rem, 7vw, 2.4rem);
+    margin-bottom: 0.6rem;
   }
   .rose-subtitle {
-    font-size: 0.95rem;
-    line-height: 1.7;
-    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    line-height: 1.65;
+    margin-bottom: 0.4rem;
   }
-  .rose-hint { margin-bottom: 1.2rem; }
+  .rose-hint { margin-bottom: 0.9rem; font-size: 0.6rem; }
+  .rose-reason { padding: 0.8rem 1.1rem; min-height: 55px; }
+  .reason-text { font-size: 0.95rem; }
 
-  /* Reason card: shrink a bit */
-  .rose-reason { padding: 0.9rem 1.2rem; min-height: 60px; }
-  .reason-text { font-size: 1rem; }
-
-  /* Bloom bar: sits just above the nav buttons */
-  .bloom-hint {
-    position: absolute !important;
-    bottom: 8.5rem !important;
-    top: auto !important;
-    right: auto !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    flex-direction: row;
-    gap: 0.7rem;
+  /* Extra-short phones (e.g. SE, Galaxy A series) */
+  @media (max-height: 680px) {
+    .rose-title { font-size: 1.4rem; margin-bottom: 0.3rem; }
+    .rose-subtitle { font-size: 0.82rem; margin-bottom: 0.3rem; }
+    .rose-hint { margin-bottom: 0.5rem; }
+    .rose-eyebrow { margin-bottom: 0.5rem; }
   }
-
-  .divider { display: none; }
 }
 
 @keyframes fadeUpMobile {
@@ -270,12 +290,4 @@ html, body { width: 100%; height: 100%; background: #07000d; overflow: hidden; }
 .ch-btn--next::before { transform: translateX(0); background: var(--rose); opacity: 0.18; }
 .ch-btn--next:hover::before { opacity: 1; }
 
-/* Mobile */
-@media (max-width: 700px) {
-  .bottom-nav {
-    flex-direction: column;
-    gap: 0.6rem;
-    bottom: max(1rem, env(safe-area-inset-bottom, 1rem));
-  }
-  .ch-btn { width: 80vw; justify-content: center; font-size: 0.58rem; padding: 0.7rem 1.2rem; }
-}
+/* (mobile bottom-nav handled in the main @media (max-width: 700px) block above) */
