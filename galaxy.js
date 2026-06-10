@@ -410,10 +410,13 @@ const MEMORIES = [
      INTERACTION — canvas only handles drag in non-UI zone
      ====================================================== */
   function starAt(mx, my) {
+    const isMobile = window.innerWidth <= 700;
     let best = -1, bestD = Infinity;
     for (let i = 0; i < memStars.length; i++) {
       const p   = project(memStars[i].ox, memStars[i].oy, memStars[i].oz);
-      const hit = 20 * memStars[i].mem.size * p.sc + 10;
+      // On mobile use a larger minimum hit area (36px) so back-facing / small stars are still tappable
+      const baseHit = isMobile ? 36 : 10;
+      const hit = Math.max(baseHit, 20 * memStars[i].mem.size * p.sc + baseHit);
       const d   = Math.hypot(mx - p.sx, my - p.sy);
       if (d < hit && d < bestD) { bestD = d; best = i; }
     }
@@ -453,7 +456,6 @@ const MEMORIES = [
   }
 
   function onTouchStart(e) {
-    if (e.target !== canvas) return;
     const tc = e.touches[0];
     lastMX = tc.clientX; lastMY = tc.clientY;
   }
@@ -462,14 +464,12 @@ const MEMORIES = [
   }
   function onTouchEnd(e) {
     if (orbDrag) { orbDrag = false; setTimeout(() => { autoRotate = true; }, 1800); return; }
-    if (e.target !== canvas && !e.changedTouches[0]) return;
-    if (e.changedTouches[0]) {
-      const tc   = e.changedTouches[0];
-      const moved = Math.hypot(tc.clientX - lastMX, tc.clientY - lastMY);
-      if (moved < 12) {
-        const idx = starAt(tc.clientX, tc.clientY);
-        if (idx >= 0) openCard(idx);
-      }
+    if (!e.changedTouches[0]) return;
+    const tc    = e.changedTouches[0];
+    const moved = Math.hypot(tc.clientX - lastMX, tc.clientY - lastMY);
+    if (moved < 12) {
+      const idx = starAt(tc.clientX, tc.clientY);
+      if (idx >= 0) openCard(idx);
     }
   }
 
@@ -572,7 +572,7 @@ const MEMORIES = [
     canvas.addEventListener('mousedown',  onMouseDown);
     window.addEventListener('mousemove',  onMouseMove);
     window.addEventListener('mouseup',    e => { orbDrag = false; onMouseUp(e); });
-    canvas.addEventListener('touchstart', onTouchStart, { passive: true });
+    window.addEventListener('touchstart', onTouchStart, { passive: true });
     window.addEventListener('touchmove',  onTouchMove,  { passive: true });
     window.addEventListener('touchend',   e => { onTouchEnd(e); });
     canvas.addEventListener('wheel',      onWheel, { passive: false });
