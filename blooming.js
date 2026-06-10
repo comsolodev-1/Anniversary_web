@@ -7,6 +7,7 @@ const STAGES = [
   { icon:'🌺', name:'In Bloom',        dream:'Build a home that feels like us.',                        color:'#f48fb1', type:'flower' },
   { icon:'🌳', name:'Growing Strong',  dream:'Grow old together — still laughing, still choosing each other.', color:'#81c784', type:'tree' },
   { icon:'✨', name:'Forever Ours',    dream:'A love so full it leaves no room for doubt.',              color:'#f48fb1', type:'forever'},
+  { icon:'🌌', name:'Our Universe',    dream:'You are my favourite place in every world.',               color:'#c084fc', type:'cosmos' },
 ];
 
 (function(){
@@ -37,18 +38,46 @@ const STAGES = [
   }
 
   let currentStage=0, stageProgress=0;
+  let autoAdvanceTimer=null;
+
+  function setStage(idx, progress){
+    const changed = idx !== currentStage;
+    currentStage = idx;
+    stageProgress = progress;
+    if(changed){ updateLabel(); spawnParticles(idx); }
+  }
+
+  // When "Forever Ours" is fully visible, wait 2.8s then auto-advance to cosmos
+  function maybeScheduleAutoAdvance(idx){
+    if(idx === STAGES.findIndex(s=>s.type==='forever') && !autoAdvanceTimer){
+      autoAdvanceTimer = setTimeout(()=>{
+        const cosmosIdx = STAGES.findIndex(s=>s.type==='cosmos');
+        // Smoothly animate stageProgress from 0→1 over ~1.2s then hold
+        let start=null;
+        function animIn(ts){
+          if(!start) start=ts;
+          const frac=Math.min((ts-start)/1200,1);
+          setStage(cosmosIdx, frac);
+          if(frac<1) requestAnimationFrame(animIn);
+        }
+        requestAnimationFrame(animIn);
+      }, 2800);
+    }
+    // If user scrolls away from forever before timer fires, cancel
+    if(idx !== STAGES.findIndex(s=>s.type==='forever') && idx !== STAGES.findIndex(s=>s.type==='cosmos')){
+      clearTimeout(autoAdvanceTimer);
+      autoAdvanceTimer=null;
+    }
+  }
 
   const scrollEl=document.getElementById('bl-scroll');
   scrollEl.addEventListener('scroll',()=>{
     const max=scrollEl.scrollHeight-scrollEl.clientHeight;
     const pct=scrollEl.scrollTop/max;
     const idx=Math.min(Math.floor(pct*(STAGES.length)),STAGES.length-1);
-    stageProgress=(pct*(STAGES.length))%1;
-    if(idx!==currentStage){
-      currentStage=idx;
-      updateLabel();
-      spawnParticles(idx);
-    }
+    const prog=(pct*(STAGES.length))%1;
+    setStage(idx, prog);
+    maybeScheduleAutoAdvance(idx);
   },{ passive:true });
 
   function updateLabel(){
@@ -78,6 +107,7 @@ const STAGES = [
     else if(stage.type==='flower') drawFlower(t,ep,stage.color);
     else if(stage.type==='tree')   drawTree(t,ep,stage.color);
     else if(stage.type==='forever') drawForever(t,ep,stage.color);
+    else if(stage.type==='cosmos')  drawCosmos(t,ep,stage.color);
 
     for(const p of particles){
       p.x+=p.vx;p.y+=p.vy;
@@ -195,6 +225,76 @@ const STAGES = [
       ctx.beginPath();ctx.arc(ox,oy,r,0,Math.PI*2);ctx.fill();
     }
     ctx.globalAlpha=1;
+  }
+
+  // COSMOS — rotating orbital rings with heart sparks, entrance fade-in via p
+  function drawCosmos(t, p, col){
+    const cy = CY - 60;
+    const S  = Math.min(W, H) * 0.22 * p;
+
+    // Central radial glow
+    const gg = ctx.createRadialGradient(CX, cy, 0, CX, cy, S * 2.2);
+    gg.addColorStop(0, 'rgba(192,132,252,0.35)');
+    gg.addColorStop(0.5, 'rgba(192,20,60,0.12)');
+    gg.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = gg; ctx.globalAlpha = p;
+    ctx.beginPath(); ctx.arc(CX, cy, S * 2.2, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // Rotating elliptical rings (3 at different tilts)
+    const rings = [
+      { rx: S * 1.0, ry: S * 0.35, speed: 0.38, tilt: 0.3,  strokeCol: 'rgba(192,132,252,', a: 0.38 },
+      { rx: S * 1.3, ry: S * 0.48, speed:-0.24, tilt:-0.2,  strokeCol: 'rgba(240,160,200,', a: 0.28 },
+      { rx: S * 0.7, ry: S * 0.25, speed: 0.55, tilt: 0.55, strokeCol: 'rgba(255,200,230,', a: 0.22 },
+    ];
+    rings.forEach(r => {
+      ctx.save();
+      ctx.translate(CX, cy);
+      ctx.rotate(r.tilt);
+      ctx.scale(1, r.ry / r.rx);
+      ctx.globalAlpha = r.a * p;
+      ctx.strokeStyle = r.strokeCol + '1)';
+      ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.arc(0, 0, r.rx, 0, Math.PI * 2); ctx.stroke();
+      ctx.restore();
+    });
+
+    // Orbiting heart sparks on the rings
+    const numHearts = 6;
+    for(let i = 0; i < numHearts; i++){
+      const a = t * 0.55 + i * (Math.PI * 2 / numHearts);
+      // Orbit on a tilted ellipse matching ring 0
+      const rx = S * 1.0, ry = S * 0.35, tilt = 0.3;
+      const ex = Math.cos(a) * rx;
+      const ey = Math.sin(a) * ry;
+      const ox = CX + ex * Math.cos(tilt) - ey * Math.sin(tilt);
+      const oy = cy + ex * Math.sin(tilt) + ey * Math.cos(tilt);
+      const sc = 3.5 * p;
+      ctx.save();
+      ctx.translate(ox, oy);
+      ctx.globalAlpha = (0.6 + 0.4 * Math.sin(t * 1.8 + i)) * p;
+      ctx.fillStyle = i % 2 === 0 ? '#f48fb1' : '#c084fc';
+      ctx.beginPath();
+      for(let j = 0; j <= 30; j++){
+        const th = (j / 30) * Math.PI * 2;
+        const hx = 16 * Math.pow(Math.sin(th), 3) * sc * 0.07;
+        const hy = -(13*Math.cos(th)-5*Math.cos(2*th)-2*Math.cos(3*th)-Math.cos(4*th)) * sc * 0.07;
+        j === 0 ? ctx.moveTo(hx, hy) : ctx.lineTo(hx, hy);
+      }
+      ctx.closePath(); ctx.fill();
+      ctx.restore();
+    }
+
+    // Central softly pulsing star
+    const pulse = 1 + 0.08 * Math.sin(t * 2.2);
+    const cr = S * 0.13 * pulse;
+    const cg = ctx.createRadialGradient(CX, cy, 0, CX, cy, cr * 3);
+    cg.addColorStop(0, 'rgba(255,255,255,0.95)');
+    cg.addColorStop(0.4, 'rgba(220,160,255,0.6)');
+    cg.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = cg; ctx.globalAlpha = p;
+    ctx.beginPath(); ctx.arc(CX, cy, cr * 3, 0, Math.PI * 2); ctx.fill();
+    ctx.globalAlpha = 1;
   }
 
   function easeOut(t){return 1-Math.pow(1-Math.min(t,1),3);}
