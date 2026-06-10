@@ -225,9 +225,8 @@ html, body {
     right: 0;
     transform: none;
     max-width: 100%;
-    padding: 1.6rem 6vw 1.8rem;
+    padding: 1.4rem 6vw max(1.8rem, env(safe-area-inset-bottom, 1.8rem));
     background: linear-gradient(to top, rgba(0,0,0,0.82) 60%, transparent);
-    /* override enter animation so it slides up from bottom */
     transition: opacity 1.8s var(--ease-expo), transform 1.8s var(--ease-expo);
     transform: translateY(20px);
   }
