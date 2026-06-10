@@ -539,17 +539,42 @@
     checkHover(e.clientX,e.clientY);
   }
   function onMouseUp(){orbDrag=false;}
+  let pinchDist0=null,zoom0=1;
+  function pDist(e){const [a,b]=Array.from(e.touches);return Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);}
+
   function onTouchStart(e){
     const tc=e.touches[0];
+    if(e.touches.length===2){
+      pinchDist0=pDist(e); zoom0=zoomTarget; orbDrag=false; return;
+    }
     if(isOverOrb(tc.clientX,tc.clientY)){
       orbDrag=true;odx=tc.clientX;ody=tc.clientY;ocx=rotXTarget;ocy=rotYTarget;
     } else {
-      // Treat tap as hover for reason reveal
+      // Direct drag on canvas
+      orbDrag=false;
+      odx=tc.clientX;ody=tc.clientY;ocx=rotXTarget;ocy=rotYTarget;
       checkHover(tc.clientX,tc.clientY);
     }
   }
-  function onTouchMove(e){if(!orbDrag)return;const tc=e.touches[0];rotYTarget=ocy+(tc.clientX-odx)*0.013;rotXTarget=ocx+(tc.clientY-ody)*0.010;}
-  function onTouchEnd(){orbDrag=false;}
+  function onTouchMove(e){
+    if(e.touches.length===2&&pinchDist0!==null){
+      const d=pDist(e);
+      zoomTarget=Math.max(0.4,Math.min(3.0,zoom0*(d/pinchDist0)));
+      return;
+    }
+    if(!orbDrag&&e.touches.length===1){
+      // Direct canvas drag
+      const tc=e.touches[0];
+      rotYTarget=ocy+(tc.clientX-odx)*0.013;
+      rotXTarget=ocx+(tc.clientY-ody)*0.010;
+      return;
+    }
+    if(!orbDrag)return;
+    const tc=e.touches[0];
+    rotYTarget=ocy+(tc.clientX-odx)*0.013;
+    rotXTarget=ocx+(tc.clientY-ody)*0.010;
+  }
+  function onTouchEnd(){orbDrag=false;pinchDist0=null;}
 
   function buildFX(){
     bokeh=[];
