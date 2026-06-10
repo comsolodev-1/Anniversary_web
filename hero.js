@@ -248,9 +248,16 @@
   }
 
   /* ---- Controls ---- */
+  let pinchDist0 = null, zoom0 = 1;
+
+  function getTouches(e) { return Array.from(e.touches); }
+  function pinchDist(e)  { const [a,b]=getTouches(e); return Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY); }
+
   function onDown(e) {
     const cx = e.clientX ?? e.touches?.[0]?.clientX ?? 0;
-    if (cx < W * 0.38) return;
+    // On mobile allow drag anywhere; on desktop restrict to right side
+    const isMob = W <= 700;
+    if (!isMob && cx < W * 0.38) return;
     isDragging = true; autoRotate = false;
     lastMX = cx;
     lastMY = e.clientY ?? e.touches?.[0]?.clientY ?? 0;
@@ -266,12 +273,32 @@
   }
   function onUp() {
     isDragging = false;
+    pinchDist0 = null;
     setTimeout(() => { autoRotate = true; }, 2000);
   }
   function onWheel(e) {
-    if (e.clientX < W * 0.38) return;
+    if (e.clientX < W * 0.38 && W > 700) return;
     e.preventDefault();
     targetZoom = Math.max(0.3, Math.min(3.5, targetZoom - e.deltaY * 0.001));
+  }
+
+  // Pinch zoom
+  function onTouchStartHero(e) {
+    if (e.touches.length === 2) {
+      pinchDist0 = pinchDist(e);
+      zoom0 = targetZoom;
+      isDragging = false;
+    } else {
+      onDown(e);
+    }
+  }
+  function onTouchMoveHero(e) {
+    if (e.touches.length === 2 && pinchDist0 !== null) {
+      const d = pinchDist(e);
+      targetZoom = Math.max(0.3, Math.min(3.5, zoom0 * (d / pinchDist0)));
+    } else {
+      onMove(e);
+    }
   }
 
   /* ---- Init ---- */
@@ -284,8 +311,8 @@
     canvas.addEventListener('mousedown',  onDown);
     window.addEventListener('mousemove',  onMove);
     window.addEventListener('mouseup',    onUp);
-    canvas.addEventListener('touchstart', onDown,  { passive:true });
-    window.addEventListener('touchmove',  onMove,  { passive:true });
+    canvas.addEventListener('touchstart', onTouchStartHero, { passive:true });
+    window.addEventListener('touchmove',  onTouchMoveHero,  { passive:true });
     window.addEventListener('touchend',   onUp);
     canvas.addEventListener('wheel',      onWheel, { passive:false });
     requestAnimationFrame(tick);
